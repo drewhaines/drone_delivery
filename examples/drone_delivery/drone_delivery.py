@@ -30,8 +30,11 @@ connection_string=args.connect
 
 #Start SITL if no connection string specified
 if not connection_string:
-    import dronekit_sitl
-    sitl = dronekit_sitl.start_default()
+    from dronekit_sitl import SITL
+    copter_args = ['-S', '--model', 'quad', '--home=32.773567, -117.073062,584,353']
+    sitl = SITL()
+    sitl.download('copter', '3.3')
+    sitl.launch(copter_args)
     connection_string = sitl.connection_string()
 
 local_path=os.path.dirname(os.path.abspath(__file__))
@@ -84,6 +87,13 @@ class Drone(object):
 
         if self.webserver_enabled is True:
             self._run_server()
+
+        print "Going towards first point for 30 seconds ..."
+	point1 = LocationGlobalRelative(32.77371798709396, -117.07003116633132, 20)
+	self.vehicle.simple_goto(point1)
+	# sleep so we can see the change in map
+	time.sleep(30)
+
 
     def takeoff(self):
         self._log("Taking off")
