@@ -167,8 +167,8 @@ class Templates:
                 'height': 470,
                 'zoom': 13,
                 'format': 'png',
-                'access_token': 'pk.eyJ1Ijoia2V2aW4zZHIiLCJhIjoiY2lrOGoxN2s2MDJzYnR6a3drbTYwdGxmMiJ9.bv5u7QgmcJd6dZfLDGoykw',
-                'mapid': 'kevin3dr.n56ffjoo',
+                'access_token': 'pk.eyJ1IjoiZHJld2hhaW5lczMiLCJhIjoiY2l6ZnZjbGRpMDBqcTMzbWVzaWRrdWhzYyJ9.Y_g81cSvWWf285OouoU7kg',
+                'mapid': 'mapbox.satellite',
                 'home_coords': self.home_coords,
                 'menu': [
                     {'name': 'Home', 'location': '/'},
