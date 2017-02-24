@@ -21,21 +21,11 @@ from jinja2 import Environment, FileSystemLoader
 
 #Set up option parsing to get connection string
 import argparse  
-parser = argparse.ArgumentParser(description='Creates a CherryPy based web application that displays a mapbox map to let you view the current vehicle position and send the vehicle commands to fly to a particular latitude and longitude. Will start and connect to SITL if no connection string specified.')
-parser.add_argument('--connect', 
-                   help="vehicle connection target string. If not specified, SITL is automatically started and used.")
-args = parser.parse_args()
 
-connection_string=args.connect
+# Connect to the Vehicle. 
+#   Set `wait_ready=True` to ensure default attributes are populated before `connect()` returns.
+vehicle = connect("127.0.0.1:14551", wait_ready=True)   
 
-#Start SITL if no connection string specified
-if not connection_string:
-    from dronekit_sitl import SITL
-    copter_args = ['-S', '--model', 'quad', '--home=32.773567, -117.073062,584,353']
-    sitl = SITL()
-    sitl.download('copter', '3.3')
-    sitl.launch(copter_args)
-    connection_string = sitl.connection_string()
 
 local_path=os.path.dirname(os.path.abspath(__file__))
 print "local path: %s" % local_path
@@ -85,14 +75,31 @@ class Drone(object):
         self.arm()
         self.takeoff()
 
-        if self.webserver_enabled is True:
-            self._run_server()
 
-        print "Going towards first point for 30 seconds ..."
-	point1 = LocationGlobalRelative(32.77371798709396, -117.07003116633132, 20)
-	self.vehicle.simple_goto(point1)
-	# sleep so we can see the change in map
-	time.sleep(30)
+	while True:
+            print "Going towards first point for 30 seconds ..."
+	    point1 = LocationGlobalRelative(32.773902, -117.072860, 20)
+	    self.vehicle.simple_goto(point1)
+	    # sleep so we can see the change in map
+	    time.sleep(30)
+
+            print "Going towards second point for 30 seconds ..."
+	    point2 = LocationGlobalRelative(32.773523, -117.072120, 20)
+	    self.vehicle.simple_goto(point2)
+	    # sleep so we can see the change in map
+	    time.sleep(30)
+
+	    print "Going towards thrid point for 30 seconds ..."
+	    point3 = LocationGlobalRelative(32.773180, -117.072764, 20)
+	    self.vehicle.simple_goto(point3)
+	    # sleep so we can see the change in map
+	    time.sleep(30)
+
+	    print "Going towards home point for 30 seconds ..."
+	    home = LocationGlobalRelative(32.773632, -117.073654, 20)
+	    self.vehicle.simple_goto(home)
+	    # sleep so we can see the change in map
+	    time.sleep(30)	
 
 
     def takeoff(self):
@@ -239,9 +246,7 @@ class DroneDelivery(object):
         return self.templates.track(self.drone.get_location())
 
 
-# Connect to the Vehicle
-print 'Connecting to vehicle on: %s' % connection_string
-vehicle = connect(connection_string, wait_ready=True)
+
 
 print 'Launching Drone...'
 Drone().launch()

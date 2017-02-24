@@ -22,19 +22,10 @@ parser.add_argument('--connect',
 args = parser.parse_args()
 
 connection_string = args.connect
-sitl = None
-
-
-#Start SITL if no connection string specified
-if not connection_string:
-    import dronekit_sitl
-    sitl = dronekit_sitl.start_default()
-    connection_string = sitl.connection_string()
 
 
 # Connect to the Vehicle
-print 'Connecting to vehicle on: %s' % connection_string
-vehicle = connect(connection_string, wait_ready=True)
+vehicle = connect("127.0.0.1:14551", wait_ready=True)
 
 
 def arm_and_takeoff(aTargetAltitude):
@@ -77,19 +68,31 @@ arm_and_takeoff(10)
 print "Set default/target airspeed to 3"
 vehicle.airspeed = 3
 
-print "Going towards first point for 30 seconds ..."
-point1 = LocationGlobalRelative(-35.361354, 149.165218, 20)
-vehicle.simple_goto(point1)
+while True:
+    print "Going towards first point for 30 seconds ..."
+    point1 = LocationGlobalRelative(32.773902, -117.072860, 20)
+    vehicle.simple_goto(point1)
+    # sleep so we can see the change in map
+    time.sleep(30)
 
-# sleep so we can see the change in map
-time.sleep(30)
+    print "Going towards second point for 30 seconds ..."
+    point2 = LocationGlobalRelative(32.773523, -117.072120, 20)
+    vehicle.simple_goto(point2)
+    # sleep so we can see the change in map
+    time.sleep(30)
 
-print "Going towards second point for 30 seconds (groundspeed set to 10 m/s) ..."
-point2 = LocationGlobalRelative(-35.363244, 149.168801, 20)
-vehicle.simple_goto(point2, groundspeed=10)
+    print "Going towards thrid point for 30 seconds ..."
+    point3 = LocationGlobalRelative(32.773180, -117.072764, 20)
+    vehicle.simple_goto(point3)
+    # sleep so we can see the change in map
+    time.sleep(30)
 
-# sleep so we can see the change in map
-time.sleep(30)
+    print "Going towards home point for 30 seconds ..."
+    home = LocationGlobalRelative(32.773632, -117.073654, 20)
+    vehicle.simple_goto(home)
+    # sleep so we can see the change in map
+    time.sleep(30)
+
 
 print "Returning to Launch"
 vehicle.mode = VehicleMode("RTL")
@@ -98,6 +101,3 @@ vehicle.mode = VehicleMode("RTL")
 print "Close vehicle object"
 vehicle.close()
 
-# Shut down simulator if it was started.
-if sitl is not None:
-    sitl.stop()
